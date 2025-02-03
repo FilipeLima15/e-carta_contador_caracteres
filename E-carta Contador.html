@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Carta</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- Para os ícones -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        html, body {
+            height: 100%;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 99%;
+            max-width: 1600px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .dark-mode {
+            background-color: #333;
+            color: rgb(255, 255, 255);
+        }
+        .dark-mode .container {
+            background-color: #2e2d2d;
+            color: white;
+        }
+        .mode-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .mode-toggle i {
+            color: #333;
+        }
+        .mode-toggle.dark i {
+            color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: bold;
+            min-width: 100px; /* Mantém o mesmo tamanho para os labels */
+            text-align: right; /* Alinha o texto do label à direita */
+        }
+
+        input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+            transition: background 0.3s, border-color 0.3s;
+            width: 100%; /* Faz com que todos os inputs tenham o mesmo tamanho */
+            box-sizing: border-box; /* Inclui padding e borda no cálculo do tamanho */
+        }
+
+
+        .counter {
+            font-size: 14px;
+            color: #706f6f; /* Cor padrão (escura) */
+            font-weight: bold;
+            text-align: right; /* Alinha o contador à direita do input */
+            min-width: 50px; /* Garante que o contador tenha um tamanho fixo */
+        }
+        body.dark-mode .counter {
+              color: white; /* Cor para o modo escuro */
+        }        
+
+        .copy-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            position: relative;
+        }
+        .copy-btn:hover {
+            background: #0056b3;
+        }
+        .copy-btn::after {
+            content: "Copiado!";
+            position: absolute;
+            background: #000;
+            color: #fff;
+            padding: 3px 5px;
+            font-size: 12px;
+            border-radius: 5px;
+            top: -25px;
+            right: 50%;
+            transform: translateX(50%);
+            display: none;
+        }
+        .copy-btn.copied::after {
+            display: block;
+        }
+        .valid {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        .invalid {
+            background: #f8d7da;
+            border-color: red;
+        }
+        .clear-btn {
+            display: block;
+            width: 50%;
+            padding: 10px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px auto 0 auto;
+        }
+        .clear-btn:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="mode-toggle" onclick="toggleDarkMode()">
+        <i class="fas fa-moon"></i> <!-- Ícone de sol -->
+    </div>
+    <div class="container">
+        <h1>Contar Caracteres E-Carta</h1>
+        <div id="form">
+            
+            <div class="input-group">
+                <label for="cep">CEP:</label>
+                <input type="text" id="cep" placeholder="Digite o CEP - É opcional" oninput="fetchAddress()">
+                <span class="counter" id="count-cep" style="visibility: hidden;">0/8</span> <!-- Contador invisível -->
+                <button class="copy-btn" onclick="copyText('cep', 8, 'CEP')">Copiar</button>
+            </div>
+            
+            <div class="input-group">
+                <label for="logradouro">Logradouro:</label>
+                <input type="text" id="logradouro" placeholder="Digite o logradouro" oninput="updateCharacterCount('logradouro')">
+                <span class="counter" id="count-logradouro">0/70</span>
+                <button class="copy-btn" onclick="copyText('logradouro', 70, 'Logradouro')">Copiar</button>
+            </div>
+            <div class="input-group">
+                <label for="numero">Número:</label>
+                <input type="text" id="numero" placeholder="Digite o número" oninput="updateCharacterCount('numero')">
+                <span class="counter" id="count-numero">0/12</span>
+                <button class="copy-btn" onclick="copyText('numero', 12, 'Número')">Copiar</button>
+            </div>
+            <div class="input-group">
+                <label for="complemento">Complemento:</label>
+                <input type="text" id="complemento" placeholder="Digite o complemento" oninput="updateCharacterCount('complemento')">
+                <span class="counter" id="count-complemento">0/50</span>
+                <button class="copy-btn" onclick="copyText('complemento', 50, 'Complemento')">Copiar</button>
+            </div>
+            <div class="input-group">
+                <label for="bairro">Bairro:</label>
+                <input type="text" id="bairro" placeholder="Digite o bairro" oninput="updateCharacterCount('bairro')">
+                <span class="counter" id="count-bairro">0/60</span>
+                <button class="copy-btn" onclick="copyText('bairro', 60, 'Bairro')">Copiar</button>
+            </div>
+            <div class="input-group">
+                <label for="cidade">Cidade:</label>
+                <input type="text" id="cidade" placeholder="Digite a cidade" oninput="updateCharacterCount('cidade')">
+                <span class="counter" id="count-cidade">0/60</span>
+                <button class="copy-btn" onclick="copyText('cidade', 60, 'Cidade')">Copiar</button>
+            </div>
+            
+            <button class="clear-btn" onclick="clearAll()">Limpar Tudo</button>
+        </div>
+    </div>
+
+    <script>
+        // Função para ativar/desativar o modo escuro
+    function toggleDarkMode() {
+        document.body.classList.toggle("dark-mode");
+        document.querySelector(".mode-toggle").classList.toggle("dark");
+        const icon = document.querySelector(".mode-toggle i");
+        // Alterar ícone conforme o tema
+        if (document.body.classList.contains("dark-mode")) {
+            icon.classList.remove("fa-moon");
+            icon.classList.add("fa-sun"); // Ícone da lua no modo escuro
+        } else {
+            icon.classList.remove("fa-sun");
+            icon.classList.add("fa-moon"); // Ícone do sol no modo claro
+        }
+
+        // Alterando a cor do contador dependendo do modo
+        const counters = document.querySelectorAll('.counter');
+        counters.forEach(counter => {
+            if (document.body.classList.contains("dark-mode")) {
+                counter.style.color = "white"; // Modo escuro: cor branca
+            } else {
+                counter.style.color = "black"; // Modo claro: cor preta
+            }
+        });
+    }
+
+        function fetchAddress() {
+            const cep = document.getElementById('cep').value.replace(/\D/g, ''); // Remove qualquer caractere não numérico
+            if (cep.length === 8) { // Só faz a consulta se o CEP tiver 8 caracteres
+                fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.erro) {
+                            // Preenche os campos de logradouro, bairro e cidade
+                            document.getElementById('logradouro').value = data.logradouro;
+                            document.getElementById('bairro').value = data.bairro;
+                            document.getElementById('cidade').value = `${data.localidade} - ${data.uf}`; // Cidade e Estado
+                            
+                            // Atualiza o contador de caracteres para os campos preenchidos
+                            updateCharacterCount('logradouro');
+                            updateCharacterCount('bairro');
+                            updateCharacterCount('cidade');
+                        } else {
+                            alert("CEP não encontrado!");
+                        }
+                    })
+                    .catch(() => alert("Erro ao buscar o CEP."));
+            }
+        }
+
+        // Função para atualizar a contagem de caracteres
+        function updateCharacterCount(id) {
+            let input = document.getElementById(id);
+            let counter = document.getElementById("count-" + id);
+
+            if (counter) {
+                let maxLength = parseInt(counter.textContent.split("/")[1]); // Obtém o valor máximo de caracteres
+                let length = input.value.length;
+                counter.textContent = `${length}/${maxLength}`;
+                
+                // Atualiza a classe de validação
+                if (length > maxLength) {
+                    input.classList.add("invalid");
+                    input.classList.remove("valid");
+
+                    // Muda a cor do contador para vermelho
+                    counter.style.color = "red";
+                } else {
+                    input.classList.add("valid");
+                    input.classList.remove("invalid");
+
+                    // Muda a cor do contador para verde
+                    counter.style.color = "green";
+                }
+            }
+        }
+
+
+
+        // Função para copiar texto
+        function copyText(id, maxLength, title) {
+            let input = document.getElementById(id);
+            let copyBtn = input.nextElementSibling.nextElementSibling;
+            
+            if (input.value.length > maxLength) {
+                let confirmCopy = confirm(`Ultrapassou o limite ${maxLength} caracteres do título ${title}. Gostaria de copiar as informações?`);
+                if (!confirmCopy) return;
+            }
+            
+            navigator.clipboard.writeText(input.value);
+            showCopiedMessage(copyBtn);
+        }
+
+        function showCopiedMessage(button) {
+            button.classList.add("copied");
+            setTimeout(() => {
+                button.classList.remove("copied");
+            }, 2000);  // Show "Copiado!" for 2 seconds
+        }
+
+        // Função para limpar todos os campos
+        function clearAll() {
+    document.querySelectorAll("input").forEach(input => {
+        // Limpa o valor do input
+        input.value = "";
+
+        // Remove as classes de validação
+        input.classList.remove("valid", "invalid");
+
+        // Restaura o contador de caracteres para o valor inicial (0/XX)
+        let counter = document.getElementById("count-" + input.id);
+        if (counter) {
+            let maxLength = counter.textContent.split("/")[1]; // Obtém o valor máximo de caracteres
+            counter.textContent = `0/${maxLength}`;
+
+            // Ajusta a cor do contador conforme o tema
+            if (document.body.classList.contains("dark-mode")) {
+                counter.style.color = "white"; // Cor branca para o tema escuro
+            } else {
+                counter.style.color = "#706f6f"; // Cor preta para o tema claro
+            }
+        }
+    });
+}
+
+
+    </script>
+</body>
+</html>
