@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -96,7 +97,7 @@
       box-shadow: 0 0 15px rgba(0,204,68,0.4);
     }
 
-    /* Estilos do Corpo */
+    /* Estilos do Corpo (AJUSTES AQUI) */
     body { 
       font-family: 'Arial', sans-serif;
       margin-top: 80px;
@@ -105,6 +106,7 @@
       background-position: center;
       background-attachment: fixed;
       min-height: 100vh;
+      background-color: #f0f4f9; /* Novo fallback */
     }
 
     main {
@@ -271,8 +273,17 @@
       to { transform: translateY(0); }
     }
 
-    /* Responsividade */
+    /* Responsividade (AJUSTES ADICIONADOS AQUI) */
     @media (max-width: 600px) {
+      body {
+        background-attachment: scroll;
+        background-image: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)),
+                          url('https://tribunademinas.com.br/colunas/maistendencias/wp-content/uploads/2025/01/Banco-do-Brasil-log.jpeg');
+        background-position: top center;
+        background-repeat: no-repeat;
+        background-size: contain;
+      }
+
       header {
         flex-direction: column;
         gap: 15px;
@@ -294,7 +305,6 @@
       }
 
       .conteudo-centralizado {
-        margin-top: 50px; /* Aumenta o espaço acima do conteúdo */
         padding: 20px;
         width: 95%;
       }
@@ -352,12 +362,16 @@
       }
 
       .conteudo-centralizado {
-        margin-top: 50px; /* Aumenta o espaço acima do conteúdo */
-        padding: 51px;
+        padding: 15px;
       }
 
       h1 {
         font-size: 20px;
+      }
+
+      /* Ajuste extra para background em telas muito pequenas */
+      body {
+        background-size: cover;
       }
     }
   </style>
